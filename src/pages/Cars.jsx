@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '../AuthContext.jsx';
+import CarImg from '../components/CarImg.jsx';
 import {
   ADDONS, COUPONS, createBooking, getCars, inr, isAvailable, quote,
 } from '../store.js';
@@ -43,7 +44,17 @@ export default function Cars() {
 
   return (
     <div>
-      <h1>Find your ride</h1>
+      <section className="hero">
+        <div>
+          <h1>Drive India your way 🇮🇳</h1>
+          <p>Hatchbacks to SUVs, EVs to 7-seaters — book in minutes with transparent pricing.</p>
+          <div className="hero-stats">
+            <span><b>{cars.length}</b> cars</span>
+            <span><b>{new Set(cars.map((c) => c.city)).size}</b> cities</span>
+            <span><b>24/7</b> support</span>
+          </div>
+        </div>
+      </section>
       <div className="filters card">
         <input placeholder="Search car…" value={q} onChange={(e) => setQ(e.target.value)} />
         <select value={type} onChange={(e) => setType(e.target.value)}>{uniq('type').map((x) => <option key={x}>{x}</option>)}</select>
@@ -68,11 +79,11 @@ export default function Cars() {
           const under = c.maintenance && c.maintenance.to >= today() && c.maintenance.from <= today();
           return (
             <div className="card car" key={c.id}>
-              <div className="emoji">{c.emoji}</div>
+              <CarImg car={c} />
               <h3>{c.name}</h3>
               <p className="muted">{c.brand} · {c.city}</p>
               <div className="tags">
-                <span>{c.type}</span><span>{c.fuel}</span><span>{c.transmission}</span><span>{c.seats} seats</span>
+                <span>{c.type}</span><span className={'f-' + c.fuel}>{c.fuel}</span><span>{c.transmission}</span><span>{c.seats} seats</span>
               </div>
               {c.maintenance && <p className="warn">🔧 Maintenance {c.maintenance.from} → {c.maintenance.to}</p>}
               <div className="row between">
@@ -121,7 +132,7 @@ function Compare({ cars, onClose }) {
   return (
     <Modal title="Compare cars" onClose={onClose}>
       <table className="tbl">
-        <thead><tr><th></th>{cars.map((c) => <th key={c.id}>{c.emoji} {c.name}</th>)}</tr></thead>
+        <thead><tr><th></th>{cars.map((c) => <th key={c.id}><CarImg car={c} className="mini" />{c.name}</th>)}</tr></thead>
         <tbody>
           {rows.map(([l, k]) => (
             <tr key={k}><td>{l}</td>{cars.map((c) => <td key={c.id}>{k === 'price' ? inr(c[k]) : c[k]}</td>)}</tr>

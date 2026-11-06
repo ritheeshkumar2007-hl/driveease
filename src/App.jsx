@@ -30,6 +30,7 @@ export default function App() {
           <Route path="*" element={<Navigate to={home(user)} replace />} />
         </Routes>
       </main>
+      <footer className="footer">© DriveEase · Car rental across India 🇮🇳</footer>
     </>
   );
 }

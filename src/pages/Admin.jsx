@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import CarImg from '../components/CarImg.jsx';
 import {
   addCar, cancelBooking, getBookings, getCars, getUsers, inr, removeCar, updateCar,
 } from '../store.js';
 
-const blank = { name: '', brand: '', type: 'Hatchback', fuel: 'Petrol', seats: 5, transmission: 'Manual', price: 2000, city: '', emoji: '🚗' };
+const blank = { name: '', brand: '', type: 'Hatchback', fuel: 'Petrol', seats: 5, transmission: 'Manual', price: 2000, city: '', color: '#6366f1', image: '' };
 
 export default function Admin() {
   const [cars, setCars] = useState(getCars);
@@ -40,6 +41,15 @@ export default function Admin() {
     const n = Number(v);
     if (!(n > 0)) return alert('Enter a valid price.');
     updateCar(c.id, { price: n });
+    refresh();
+  };
+
+  const photo = (c) => {
+    const v = prompt(`Photo URL for ${c.name} (leave empty to use the automatic photo)`, c.image || '');
+    if (v === null) return;
+    const url = v.trim();
+    if (url && !/^https?:\/\//i.test(url)) return alert('Enter a full http(s) image URL.');
+    updateCar(c.id, { image: url });
     refresh();
   };
 
@@ -92,7 +102,8 @@ export default function Admin() {
               <select value={f.transmission} onChange={set('transmission')}><option>Manual</option><option>Automatic</option></select>
               <input type="number" min="2" max="12" placeholder="Seats" value={f.seats} onChange={set('seats')} />
               <input type="number" min="1" placeholder="₹ / day" value={f.price} onChange={set('price')} />
-              <input placeholder="Emoji" value={f.emoji} onChange={set('emoji')} />
+              <label className="colorpick">Car colour<input type="color" value={f.color} onChange={set('color')} /></label>
+              <input placeholder="Photo URL (optional)" value={f.image} onChange={set('image')} />
             </div>
             {msg && <p className="muted">{msg}</p>}
             <button className="btn primary">Add car</button>
@@ -104,12 +115,13 @@ export default function Admin() {
               <tbody>
                 {cars.map((c) => (
                   <tr key={c.id}>
-                    <td>{c.emoji} {c.name}</td>
+                    <td className="carcell"><CarImg car={c} className="mini" />{c.name}</td>
                     <td>{c.city}</td>
                     <td>{inr(c.price)}</td>
                     <td>{c.maintenance ? `${c.maintenance.from} → ${c.maintenance.to}` : '—'}</td>
                     <td className="row gap">
                       <button className="btn ghost small" onClick={() => price(c)}>Edit price</button>
+                      <button className="btn ghost small" onClick={() => photo(c)}>Photo</button>
                       <button className="btn ghost small" onClick={() => maint(c)}>{c.maintenance ? 'Clear maint.' : 'Schedule maint.'}</button>
                       <button className="btn danger small" onClick={() => del(c)}>Remove</button>
                     </td>

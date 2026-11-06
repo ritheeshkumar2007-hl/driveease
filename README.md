@@ -25,5 +25,5 @@ npm run build      # production build -> dist/
 Or with the CLI: `npm i -g vercel && vercel --prod`.
 
 ## Local Storage keys
-`driveease_users_v3`, `driveease_cars_v3`, `driveease_bookings_v3`, `driveease_session_v3`
+`driveease_users_v3`, `driveease_cars_v4`, `driveease_bookings_v3`, `driveease_session_v3`
 (clear them in DevTools → Application to reset the demo data).
